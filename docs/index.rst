@@ -3,14 +3,25 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Web Platform Compatibility API's documentation!
-==========================================================
+Web Platform Compatibility API
+==============================
+
+The Web Platform Compatibility API is a project started in December 2013.
+The goals, requirements, and current status are documented on the
+MozillaWiki_.
+
+.. _MozillaWiki: https://wiki.mozilla.org/index.php?title=MDN/Projects/Development/CompatibilityTables
+
+This project will implement the data store and API for compatibility data
+and related resources.  We're currently defining the API and the split
+between API-side and client-side functionality.
 
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
+   draft/intro
 
 
 Indices and tables
