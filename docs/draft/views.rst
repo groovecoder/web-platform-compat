@@ -5,28 +5,32 @@ A **View** is a combination of resources for a particular presentation.  It is
 suitable for anonymous viewing of content.
 
 It is possible that views are unnecessary, and could be constructed by
-supporting optional parts of the JSON API spec, such as
-[Inclusion of Linked Resources](http://jsonapi.org/format/#fetching-includes).
-These views are written as if they are aliases for a fully-fleshed
-implementation of JSON API.
+supporting optional parts of the JSON API spec, such as `Inclusion of Linked
+Resources`_.  These views are written as if they are aliases for a
+fully-fleshed implementation of JSON API.
 
 View a Feature Set
 ------------------
 
-This view collects the data for a **feature-set**, including the related
+This view collects the data for a feature-set_, including the related
 resources needed to display it on MDN.
 
-Here is a simple example, the view for the HTML element
-[address](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/address)::
+Here is a simple example, the view for the HTML element address_:
+
+.. code-block:: http
 
     GET /views/view-by-feature-set/html-address HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "feature-sets": {
@@ -807,9 +811,9 @@ The process for using this representation is:
 
 1. Parse into an in-memory object store,
 2. Create the "Specifications" section:
-    1. Add the `Specifications` header
+    1. Add the ``Specifications`` header
     2. Create an HTML table with a header row "Specification", "Status", "Comment"
-    3. For each id in feature-sets.links.specification-sections (`["746", "421", "70"]`):
+    3. For each id in feature-sets.links.specification-sections (``["746", "421", "70"]``):
         * Add the first column: a link to specifications.uri.(lang or en) +
           specifications-sections.subpath.(lang or en), with link text
           specifications.name.(lang or en), with title based on
@@ -828,15 +832,15 @@ The process for using this representation is:
        parenthesis
     4. For each feature in feature-sets.features:
         * Add the first column: the feature name.  If feature.canonical,
-          use the `zxx` translation of feature.name wrapped in `<code>`.
+          use the ``zxx`` translation of feature.name wrapped in ``<code>``.
           Otherwise, use the best translation of feature.name, in a
-          `lang=(lang)` block.
+          ``lang=(lang)`` block.
         * For each browser id in meta.compat-table-important:
             - Get the important browser-version-feature IDs from
-              meta.compat-table-important.browser-version-features.<`feature ID`>.<`browser ID`>
+              meta.compat-table-important.browser-version-features.<``feature ID``>.<``browser ID``>
             - If null, then display "?"
-            - If just one, display "<`version`> (<`engine version`>)",
-              "<`version`>", or "<`support`>", depending on the defined attributes
+            - If just one, display "<``version``> (<``engine version``>)",
+              "<``version``>", or "<``support``>", depending on the defined attributes
             - If multiple, display as subcells
             - Add prefixes, notes, and footnotes links as appropriate
     5. Close each table, add an edit button
@@ -845,27 +849,30 @@ The process for using this representation is:
 This may be done by including the JSON in the page as sent over the wire,
 or loaded asynchronously, with the tables built after initial page load.
 
-This can also be used by a
-["caniuse" table layout](https://wiki.mozilla.org/MDN/Development/CompatibilityTables/Data_Requirements#1._CanIUse_table_layout)
-by ignoring the meta section and displaying all the included data.  This will
-require more client-side processing to generate, or additional data in the
-`<meta>` section.
+This can also be used by a `"caniuse" table layout`_ by ignoring the meta
+section and displaying all the included data.  This will require more
+client-side processing to generate, or additional data in the ``<meta>``
+section.
 
 Updating Views with Changesets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Updating the page requires a sequence of requests.  For example, if a user
-wants to change Chrome support for `<address>` from an unknown version to
-version 1, you'll have to create the **browser-version** for that version,
-then add the **browser-version-feature** for the support.
+wants to change Chrome support for ``<address>`` from an unknown version to
+version 1, you'll have to create the browser-version_ for that version,
+then add the browser-version-feature_ for the support.
 
-The first step is to create a **changeset** as an authenticated user::
+The first step is to create a changeset_ as an authenticated user:
+
+.. code-block:: http
 
     POST /changesets/ HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "changesets": {
@@ -874,11 +881,15 @@ The first step is to create a **changeset** as an authenticated user::
         }
     }
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 201 Created
     Content-Type: application/vnd.api+json
     Location: https://api.compat.mozilla.org/changesets/5284
+
+.. code-block:: json
 
     {
         "changesets": {
@@ -924,13 +935,17 @@ The first step is to create a **changeset** as an authenticated user::
         }
     }
 
-Next, use the **changeset** ID when creating the **browser-version**::
+Next, use the changeset_ ID when creating the browser-version_:
+
+.. code-block:: http
 
     POST /browser-versions/?changeset=5284 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browser-versions": {
@@ -942,11 +957,15 @@ Next, use the **changeset** ID when creating the **browser-version**::
         }
     }
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 201 Created
     Content-Type: application/vnd.api+json
     Location: https://api.compat.mozilla.org/browser-versions/4477
+
+.. code-block:: json
 
     {
         "browser-versions": {
@@ -984,13 +1003,17 @@ Next, use the **changeset** ID when creating the **browser-version**::
         }
     }
 
-Finally, create the **browser-version-feature**::
+Finally, create the browser-version-feature_:
+
+.. code-block:: http
 
     POST /browser-version-features/?changeset=5284 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browser-version-features": {
@@ -1002,9 +1025,15 @@ Finally, create the **browser-version-feature**::
         }
     }
 
+A sample response is:
+
+.. code-block:: http
+
     HTTP/1.1 201 Created
     Content-Type: application/vnd.api+json
     Location: https://api.compat.mozilla.org/browser-version-features/8219
+
+.. code-block:: json
 
     {
         "browser-version-features": {
@@ -1040,10 +1069,23 @@ Finally, create the **browser-version-feature**::
         }
     }
 
-The **browser-versions-history** and **browser-version-features-history**
-resources will both refer to **changeset** 5284, and this **changeset** is
-linked to **feature-set** 816, despite the fact that no changes were made
-to the **feature-set**.  This will facilitate displaying a history of
+The browser-versions-history_ and browser-version-features-history_
+resources will both refer to changeset_ 5284, and this changeset_ is
+linked to feature-set_ 816, despite the fact that no changes were made
+to the feature-set_.  This will facilitate displaying a history of
 the compatibility tables, for the purpose of reviewing changes and reverting
 vandalism.
+
+.. _browser-version: resources.html#browser-versions
+.. _browser-version-feature: resources.html#browser-versions-feature
+.. _feature-set: resources.html#feature-sets
+
+.. _changeset: change-control#changeset
+
+.. _browser-versions-history: history.html#browser-versions-history
+.. _browser-version-features-history: history.html#browser-version-features-history
+
+.. _address: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/address
+.. _`Inclusion of Linked Resources`: http://jsonapi.org/format/#fetching-includes
+.. _`"caniuse" table layout`: https://wiki.mozilla.org/MDN/Development/CompatibilityTables/Data_Requirements#1._CanIUse_table_layout
 

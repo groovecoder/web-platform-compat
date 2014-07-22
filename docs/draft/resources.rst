@@ -1,32 +1,33 @@
 Resources
 =========
 
-Resources are simple objects supporting CRUD operations.  Read operations
-can be done anonymously.  Creating and updating require account permissions,
-and deleting requires admin account permissions.
+Resources are simple objects supporting CRUD_ operations.  Read operations can
+be done anonymously.  Creating and updating require account permissions, and
+deleting requires admin account permissions.
 
 All resources support similar operations using HTTP methods:
 
-* `GET /<type>` - List instances (paginated)
-* `POST /<type>` - Create new instance
-* `GET /<type>/<id>` - Retrieve an instance
-* `PUT /<type>/<id>` - Update an instance
-* `DELETE /<type>/<id>` - Delete instance
+* ``GET /<type>`` - List instances (paginated)
+* ``POST /<type>`` - Create new instance
+* ``GET /<type>/<id>`` - Retrieve an instance
+* ``PUT /<type>/<id>`` - Update an instance
+* ``DELETE /<type>/<id>`` - Delete instance
 
-Additional features may be added as needed.  See the `JSON API docs`_
-for ideas and what format they will take.
-
-.. _`JSON API docs`: http://jsonapi.org/format/
+Additional features may be added as needed.  See the `JSON API docs`_ for ideas
+and what format they will take.
 
 Because the operations are similar, only browsers_ has complete operations
-examples, and others just show retrieving an instance (`GET /<type>/<id>`).
+examples, and others just show retrieving an instance (``GET /<type>/<id>``).
+
+.. _CRUD: http://en.wikipedia.org/wiki/Create,_read,_update_and_delete
+.. _`JSON API docs`: http://jsonapi.org/format/
 
 Browsers
 --------
 
 A **browser** is a brand of web client that has one or more versions.  This
-follows most users' understanding of browsers, i.e., `firefox` represents
-desktop Firefox, `safari` represents desktop Safari, and `firefox-mobile`
+follows most users' understanding of browsers, i.e., ``firefox`` represents
+desktop Firefox, ``safari`` represents desktop Safari, and ``firefox-mobile``
 represents Firefox Mobile.
 
 The **browsers** representation includes:
@@ -39,31 +40,33 @@ The **browsers** representation includes:
     - **name** *(localized)* - Browser name
     - **engine** *(localized)* - Browser engine, or null if not version tracked
 * **links**
-    - **versions** *(many)* - Associated **browser-versions**, ordered roughly
+    - **versions** *(many)* - Associated browser-versions_, ordered roughly
       from earliest to latest.  User can change the order.
-    - **history-current** *(one)* - Current **browsers-history**.  Can be
+    - **history-current** *(one)* - Current browsers-history_.  Can be
       set to a value from **history** to revert changes.
-    - **history** *(many)* - Associated **browsers-history** in time order
+    - **history** *(many)* - Associated browsers-history_ in time order
       (most recent first). Changes are ignored.
+
 
 List
 ****
 
-To get the paginated list of **browsers**:
+To request the paginated list of **browsers**:
 
-.. highlight::http
-
-::
+.. code-block:: http
 
     GET /browsers HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
+A sample response is:
 
-::
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browsers": [{
@@ -243,16 +246,22 @@ To get the paginated list of **browsers**:
 Retrieve by ID
 **************
 
-To get a single **browser**::
+To request a single **browser**:
+
+.. code-block:: http
 
     GET /browsers/2 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -291,17 +300,23 @@ To get a single **browser**::
 Retrieve by Slug
 ****************
 
-To get a **browser** by slug::
+To request a **browser** by slug:
+
+.. code-block:: http
 
     GET /browsers/firefox HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
     Location: https://api.compat.mozilla.org/browsers/2
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -341,18 +356,22 @@ Create
 ******
 
 Creating **browser** instances require authentication with create privileges.
-To create a new **browser** instance, POST a representation with at least the
-required parameters.  Some items (such as the `id` attribute and the
-`history-current` link) will be picked by the server, and will be ignored if
+To create a new **browser** instance, ``POST`` a representation with at least
+the required parameters.  Some items (such as the ``id`` attribute and the
+``history-current`` link) will be picked by the server, and will be ignored if
 included.
 
-Here's an example of creating a **browser** instance::
+Here's an example of creating a **browser** instance:
+
+.. code-block:: http
 
     POST /browsers HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -364,11 +383,15 @@ Here's an example of creating a **browser** instance::
         }
     }
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 201 Created
     Content-Type: application/vnd.api+json
     Location: https://api.compat.mozilla.org/browsers/15
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -402,15 +425,19 @@ Here's an example of creating a **browser** instance::
         }
     }
 
-This, and other methods that change resources, will create a new
-**changeset**, and associate the new **browsers-history** with that
-**changeset**.  To assign to an existing changeset, add it to the URI::
+This, and other methods that change resources, will create a new changeset_,
+and associate the new browsers-history_ with that changeset_.  To assign to an
+existing changeset, add it to the URI:
+
+.. code-block:: http
 
     POST /browsers?changeset=176 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -426,17 +453,21 @@ Update
 ******
 
 Updating a **browser** instance require authentication with create privileges.
-Some items (such as the `id` attribute and `history` links) can not be
+Some items (such as the ``id`` attribute and ``history`` links) can not be
 changed, and will be ignored if included.  A successful update will return a
-`200 OK`, add a new ID to the `history` links list, and update the
-`history-current` link.
+``200 OK``, add a new ID to the ``history`` links list, and update the
+``history-current`` link.
 
-To update a **browser**::
+To update a **browser**:
+
+.. code-block:: http
 
     PUT /browsers/3 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -451,10 +482,14 @@ To update a **browser**::
         }
     }
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -491,12 +526,16 @@ To update a **browser**::
 Partial Update
 **************
 
-An update can just update some fields::
+An update can just update some fields:
+
+.. code-block:: http
 
     PUT /browsers/3 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -506,9 +545,14 @@ An update can just update some fields::
         }
     }
 
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -542,12 +586,16 @@ An update can just update some fields::
         }
     }
 
-To change just the **browser-version** order::
+To change just the browser-versions_ order:
+
+.. code-block:: http
 
     PUT /browsers/3 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -557,10 +605,14 @@ To change just the **browser-version** order::
         }
     }
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -597,15 +649,18 @@ To change just the **browser-version** order::
 Reverting to a previous version
 *******************************
 
-To revert to an earlier version, set the `history-current` link to a
+To revert to an earlier version, set the ``history-current`` link to a
 previous value.  This resets the content and creates a new
-**browsers-history** object::
+browsers-history_ object:
 
+.. code-block:: http
 
     PUT /browsers/3 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -615,10 +670,14 @@ previous value.  This resets the content and creates a new
         }
     }
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -655,31 +714,41 @@ previous value.  This resets the content and creates a new
 Deletion
 ********
 
-To delete a **browser**::
+To delete a **browser**:
+
+.. code-block:: http
 
     DELETE /browsers/2 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
 
-::
+A successful response has no body:
+
+.. code-block:: http
 
     HTTP/1.1 204 No Content
 
 Reverting a deletion
 ********************
 
-To revert a deletion::
+To revert a deletion:
+
+.. code-block:: http
 
     PUT /browsers/2 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
     Authorization: Bearer mF_9.B5f-4.1JqM
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browsers": {
@@ -715,6 +784,7 @@ To revert a deletion::
         }
     }
 
+
 Browser Versions
 ----------------
 
@@ -728,22 +798,20 @@ The **browser-versions** representation includes:
       if unknown (for example, to document support for features in early HTML)
     - **engine-version** *(write-once)* - Version of browser engine, or null
       if not tracked
-    - **release-day** - Day that browser was released in
-      [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format, or null if
-      unknown.
+    - **release-day** - Day that browser was released in `ISO 8601`_ format, or
+      null if unknown.
     - **retirement-day** - Approximate day the browser was "retired" (stopped
-      being a current browser), in
-      [ISO 8601](http://en.wikipedia.org/wiki/ISO_8601) format, or null if
-      unknown.
-    - **status** - One of:
-        + "retired" - Old version, no longer the preferred download for any
-          platform
-        + "retired-beta" - Old beta version, replaced by a new beta or release
-        + "current" - Current version, the preferred download or update for
-          users
-        + "beta" - A release candidate suggested for early adopters or testers
-        + "future" - A planned future release
-    - **release-notes-uri** (localized) - URI of release notes for this
+      being a current browser), in `ISO 8601`_ format, or null if unknown.
+    - **status** - One of
+      ``retired`` (old version, no longer the preferred download for any
+      platform),
+      ``retired-beta`` (old beta version, replaced
+      by a new beta or release),
+      ``current`` (current version, the preferred download or update for
+      users),
+      ``beta`` (a release candidate suggested for early adopters or testers),
+      ``future`` (a planned future release).
+    - **release-notes-uri** *(localized)* - URI of release notes for this
       version, or null if none.
 * **links**
     - **browser** - The related **browser**
@@ -755,16 +823,22 @@ The **browser-versions** representation includes:
     - **history** *(many)* - Associated **browser-versions-history**, in time
       order (most recent first).  Changes are ignored.
 
-To get a single **browser-version**::
+To get a single **browser-version**:
+
+.. code-block:: http
 
     GET /browser-versions/123 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browser-versions": {
@@ -805,8 +879,8 @@ To get a single **browser-version**::
 Features
 --------
 
-A **feature** is a precise web technology, such as the value `cover` for the CSS
-`background-size` property.
+A **feature** is a precise web technology, such as the value ``cover`` for the
+CSS ``background-size`` property.
 
 The **features** representation includes:
 
@@ -815,49 +889,52 @@ The **features** representation includes:
     - **slug** *(write-once)* - Unique, human-friendly slug
     - **maturity** - Is the feature part of a current recommended standard?
       One of the following:
-
-        * `standard` - Default value.  Feature is defined in a current
-          standard.
-        * `non-standard` - Feature was never defined in a standard or was
-          explicitly removed by a current standard.
-        * `experimental` - Feature is part of a standard that isn't endorsed,
-          such as a working draft or on the recommendation track.
+      ``standard`` (default value, feature is defined in a current standard),
+      ``non-standard`` (feature was never defined in a standard or was
+      explicitly removed by a current standard),
+      ``experimental`` (feature is part of a standard that isn't endorsed,
+      such as a working draft or on the recommendation track)
     - **canonical** - true if the **name** is a canonical name, representing
-      code that a developer could use directly.  For example, "display: none" is
+      code that a developer could use directly.  For example, ``"display: none"`` is
       the canonical name for the CSS display property with a value of none,
-      while "Basic support" and
-      "&lt;code&gt;none, inline&lt;/code&gt; and &lt;code&gt;block&lt;/code&gt;"
+      while ``"Basic support"`` and
+      ``"<code>none, inline</code> and <code>block</code>"``
       are non-canonical names that should be translated.
-    - **name** *(localized)* - Feature name.  When **canonical** is
-      True, the only translated string is in the
-      [non-linguistic](http://www.w3.org/International/questions/qa-no-language#nonlinguistic)
-      language `zxx`, and should be wrapped in a `<code>` block when
-      displayed.  When **canonical** is false, the name will include at
-      least an `en` translation, and may include HTML markup.
+    - **name** *(localized)* - Feature name.  When **canonical** is True, the
+      only translated string is in the non-linguistic_ language ``zxx``, and
+      should be wrapped in a ``<code>`` block when displayed.  When
+      **canonical** is false, the name will include at least an ``en``
+      translation, and may include HTML markup.
 * **links**
-    - **feature-sets** *(many)* - Associated **feature-sets**.  Ideally, a
-      **feature** is contained in a single **feature-set**, but it may be
-      associated with multiple **feature-sets** during a transition
+    - **feature-sets** *(many)* - Associated feature-sets_.  Ideally, a
+      feature is contained in a single feature-set_ but it may be
+      associated with multiple feature-sets_ during a transition
       period.  Order is in ID order, changes are ignored.
-    - **specification-sections** *(many)* - Associated **specification-sections**.
+    - **specification-sections** *(many)* - Associated specification-sections_.
       Order can be changed by the user.
-    - **browser-version-features** *(many)* - Associated **browser-version-features**,
+    - **browser-version-features** *(many)* - Associated browser-version-features_,
       Order is in ID order, changes are ignored.
-    - **history-current** *(one)* - Current **features-history**.  User can
+    - **history-current** *(one)* - Current features-history_.  User can
       set to a valid **history** to revert to that version.
-    - **history** *(many)* - Associated **features-history**, in time order
+    - **history** *(many)* - Associated features-history_, in time order
       (most recent first).  Changes are ignored.
 
-To get a specific **feature** (in this case, a canonically-named feature)::
+To get a specific **feature** (in this case, a canonically-named feature):
+
+.. code-block:: http
 
     GET /features/276 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "features": {
@@ -896,16 +973,22 @@ To get a specific **feature** (in this case, a canonically-named feature)::
         }
     }
 
-Here's an example of a non-canonically named feature::
+Here's an example of a non-canonically named feature:
+
+.. code-block:: http
 
     GET /features/191 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "features": {
@@ -950,8 +1033,8 @@ Feature Sets
 ------------
 
 A **feature-set** organizes features into a heierarchy of logical groups.  A
-**feature-set** corresponds to a page on [MDN](https://developer.mozilla.org),
-which will display a list of specifications and a browser compatibility table.
+**feature-set** corresponds to a page on MDN_, which will display a list of
+specifications and a browser compatibility table.
 
 The **feature-sets** representation includes:
 
@@ -962,51 +1045,56 @@ The **feature-sets** representation includes:
       first scraped from.  May be used in UX or for debugging import scripts.
     - **canonical** - true if the feature set has a canonical name,
       representing code that a developer could use directly.  For example,
-      "display" is a canonical name for the CSS display property, and
-      should not be translated, while "CSS" and
-      "Flexbox Values for &lt;code&gt;display&lt;code&gt;" are non-canonical
-      names that should be translated.
-    - **name** *(localized)* - Feature set name.  When **canonical** is
-      True, the only translated string is in the
-      [non-linguistic](http://www.w3.org/International/questions/qa-no-language#nonlinguistic)
-      language `zxx`, and should be wrapped in a `<code>` block when
-      displayed.  When **canonical** is false, the name will include at
-      least an `en` translation, and may include HTML markup.
+      ``"display"`` is a canonical name for the CSS display property, and
+      should not be translated, while ``"CSS"`` and ``"Flexbox Values for
+      <code>display</code>"`` are non-canonical names that should be
+      translated.
+    - **name** *(localized)* - Feature set name.  When **canonical** is True,
+      the only translated string is in the non-linguistic_ language ``zxx``,
+      and should be wrapped in a ``<code>`` block when displayed.  When
+      **canonical** is false, the name will include at least an ``en``
+      translation, and may include HTML markup.
 * **links**
-    - **features** *(many)* - Associated **features**.  Can be re-ordered by
+    - **features** *(many)* - Associated features_.  Can be re-ordered by
       the user.
     - **specification-sections** *(many)* - Associated
-      **specification-sections**.  Can be re-ordered by the user.
-    - **parent** *(one or null)* - The **feature-set** one level up, or null
+      specification-sections_.  Can be re-ordered by the user.
+    - **parent** *(one or null)* - The feature-set one level up, or null
       if top-level.  Can be changed by user.
-    - **ancestors** *(many)* - The **feature-sets** that form the path to the
+    - **ancestors** *(many)* - The feature-sets that form the path to the
       top of the tree, including this one, in bread-crumb order (top to self).
       Can not be changed by user - set the **parent** instead.
-    - **siblings** *(many)* - The **feature-sets** with the same parent,
+    - **siblings** *(many)* - The feature-sets with the same parent,
       including including this one, in display order.  Can be re-ordered by the
       user.
-    - **children** *(many)* - The **feature-sets** that have this
-      **feature-set** as parent, in display order.  Can be re-ordered by the
+    - **children** *(many)* - The feature-sets that have this
+      feature-set as parent, in display order.  Can be re-ordered by the
       user.
-    - **decendants** *(many)* - The **feature-sets** in the local tree for
-      this **feature-set**. including this one, in tree order.  Can not be
-      changed by the user - set the **parent** on the child **feature-set**
+    - **decendants** *(many)* - The feature-sets in the local tree for
+      this feature-set. including this one, in tree order.  Can not be
+      changed by the user - set the **parent** on the child feature-set
       instead.
-    - **history-current** *(one)* - The current **feature-sets-history**
-    - **history** *(many)* - Associated **feature-sets-history**, in time
+    - **history-current** *(one)* - The current feature-sets-history_
+    - **history** *(many)* - Associated feature-sets-history_, in time
       order (most recent first).  Can not be re-ordered by user.
 
 
-To get a single **feature set** (in this case, a canonically named feature)::
+To get a single **feature set** (in this case, a canonically named feature):
+
+.. code-block:: http
 
     GET /features-sets/373 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "feature-sets": {
@@ -1079,36 +1167,42 @@ The **browser-version-feature** representation includes:
 
 * **attributes**
     - **id** *(server selected)* - Database ID
-    - **support** - Assertion of support of the **browser-version** for the
-      **feature**, one of "yes", "no", "prefixed", "partial", "unknown",
-      or "never"
+    - **support** - Assertion of support of the browser-version_ for the
+      feature_, one of ``"yes"``, ``"no"``, ``"prefixed"``, ``"partial"``,
+      ``"unknown"``, or ``"never"``
     - **prefix** - Prefix needed, if support is "prefixed"
     - **note** *(localized)* - Short note on support, designed for inline
       display, max 20 characters
     - **footnote** *(localized)* - Long note on support, designed for
       display after a compatibility table, MDN wiki format
 * **links**
-    - **browser-version** *(one)* - The associated **browser-version**.  Can
+    - **browser-version** *(one)* - The associated browser-version_.  Can
       be changed by the user.
-    - **feature** *(one)* - The associated **feature**.  Can be changed by
+    - **feature** *(one)* - The associated feature_.  Can be changed by
       the user.
     - **history-current** *(one)* - Current
-      **browser-version-features-history**.  Can be changed to a valid
+      browser-version-features-history_.  Can be changed to a valid
       **history** to revert to that version.
-    - **history** *(many)* - Associated **browser-version-features-history**
+    - **history** *(many)* - Associated browser-version-features-history_
       in time order (most recent first).  Changes are ignored.
 
 
-To get a single **browser-version-features**::
+To get a single **browser-version-feature**:
+
+.. code-block:: http
 
     GET /browser-version-features/1123 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "browser-version-features": {
@@ -1153,29 +1247,32 @@ The **specification** representation includes:
 
 * **attributes**
     - **id** *(server selected)* - Database ID
-    - **kuma-key** - The key for the KumaScript macros
-      [SpecName](https://developer.mozilla.org/en-US/docs/Template:SpecName)
-      and
-      [Spec2](https://developer.mozilla.org/en-US/docs/Template:Spec2),
+    - **kuma-key** - The key for the KumaScript macros SpecName_ and Spec2_
       used as a data source.
     - **name** *(localized)* - Specification name
     - **uri** *(localized)* - Specification URI, without subpath and anchor
 * **links**
-    - **specification-sections** *(many)* - Associated **specification-sections**.
+    - **specification-sections** *(many)* - Associated specification-sections_.
       The order can be changed by the user.
-    - **specification-status** *(one)* - Associated **specification-status**.
+    - **specification-status** *(one)* - Associated specification-status_.
       Can be changed by the user.
 
-To get a single **specification**::
+To get a single **specification**:
+
+.. code-block:: http
 
     GET /specifications/273 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vn.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "specifications": {
@@ -1209,7 +1306,7 @@ To get a single **specification**::
 Specification Sections
 ----------------------
 
-A **specification-section** refers to a specific area of a **specification**
+A **specification-section** refers to a specific area of a specification_
 document.
 
 The **specification-section** representation includes:
@@ -1221,23 +1318,29 @@ The **specification-section** representation includes:
       to the subsection in the doc.  Can be empty string.
     - **note** *(localized)* - Notes for this section
 * **links**
-    - **specification** *(one)* - The **specification**.  Can be changed by
+    - **specification** *(one)* - The specification_.  Can be changed by
       the user.
-    - **features** *(many)* - The associated **features**.  In ID order,
+    - **features** *(many)* - The associated features_.  In ID order,
       changes are ignored.
-    - **feature-sets** *(many)* - The associated **feature-sets**.  In ID,
+    - **feature-sets** *(many)* - The associated feature-sets_.  In ID
       order, changes are ignored.
 
-To get a single **specification-section**::
+To get a single **specification-section**:
+
+.. code-block:: http
 
     GET /specification-sections/792 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vn.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "specification-sections": {
@@ -1272,30 +1375,35 @@ To get a single **specification-section**::
 Specification Statuses
 ----------------------
 
-A **specification-status** refers to the status of a **specification**
+A **specification-status** refers to the status of a specification_
 document.
 
 The **specification-status** representation includes:
 
 * **attributes**
     - **id** *(server selected)* - Database ID
-    - **kuma-key** - The value for this status in the KumaScript macro
-      [Spec2](https://developer.mozilla.org/en-US/docs/Template:Spec2)
+    - **kuma-key** - The value for this status in the KumaScript macro Spec2_
     - **name** *(localized)* - Status name
 * **links**
-    - **specifications** *(many)* - Associated **specifications**.
-      In ID order, changes are ignored.
+    - **specifications** *(many)* - Associated specifications_.  In ID order,
+      changes are ignored.
 
-To get a single **specification-status**::
+To get a single **specification-status**:
+
+.. code-block:: http
 
     GET /specification-statuses/49 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vn.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "specification-statuses": {
@@ -1316,3 +1424,26 @@ To get a single **specification-status**::
             }
         }
     }
+
+.. _browser-version-features: `Browser Version Features`_
+.. _browser-version: `Browser Versions`_
+.. _browser-versions: `Browser Versions`_
+.. _feature: Features_
+.. _feature-set: `Feature Sets`_
+.. _feature-sets: `Feature Sets`_
+.. _specification: Specifications_
+.. _specification-sections: `Specification Sections`_
+.. _specification-status: `Specification Statuses`_
+
+.. _changeset: change-control.html#changesets
+
+.. _browsers-history: history.html#browsers-history
+.. _browser-version-features-history: history.html#browser-version-features-history
+.. _features-history: history.html#features-history
+.. _feature-sets-history: history.html#feature-sets-history
+
+.. _non-linguistic: http://www.w3.org/International/questions/qa-no-language#nonlinguistic
+.. _`ISO 8601`: http://en.wikipedia.org/wiki/ISO_8601
+.. _MDN: https://developer.mozilla.org
+.. _SpecName: https://developer.mozilla.org/en-US/docs/Template:SpecName
+.. _Spec2: https://developer.mozilla.org/en-US/docs/Template:Spec2

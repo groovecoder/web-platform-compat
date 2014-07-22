@@ -18,27 +18,32 @@ The representation includes:
       account was created
     - **agreement-version** - The version of the contribution agreement the
       user has accepted.  "0" for not agreed, "1" for first version, etc.
-    - **permissions** - A list of permissions.  Permissions include:
-        * "change-browser-version-feature" - Add or change a
-          **browser-version-feauture**
-        * "change-resource" - Add or change any resource except **users** or
-          history resources
-        * "change-user" - Change a **user** resource
-        * "delete-resource" - Delete any resource
+    - **permissions** - A list of permissions.  Permissions include
+      ``"change-browser-version-feature"`` (add or change a browser-version-feature_)
+      ``"change-resource"`` (add or change any resource except users_ or
+      history resources)
+      ``"change-user"`` (change a user_ resource)
+      ``"delete-resource"`` (delete any resource)
 * **links**
-    - **changesets** *(many)* - Associated **changesets**, in ID order,
-      changes are ignored.
+    - **changesets** *(many)* - Associated changesets_, in ID order, changes
+      are ignored.
 
-To get a single **user** representation::
+To get a single **user** representation:
+
+.. code-block:: http
 
     GET /users/42 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "users": {
@@ -59,7 +64,9 @@ To get a single **user** representation::
         }
     }
 
-If a client is authenticated, the logged-in user's account can be retrieved with::
+If a client is authenticated, the logged-in user's account can be retrieved with:
+
+.. code-block:: http
 
     GET /users/me HTTP/1.1
     Host: api.compat.mozilla.org
@@ -70,9 +77,9 @@ Changesets
 
 A **changeset** collects history resources into a logical unit, allowing for
 faster reversions and better history display.  The **changeset** can be
-auto-created through a `POST`, `PUT`, or `DELETE` to a resource, or it can
-be created independently and specified by adding `changeset=<ID>` URI
-parameter (i.e., `PUT /browsers/15?changeset=73`).
+auto-created through a ``POST``, ``PUT``, or ``DELETE`` to a resource, or it
+can be created independently and specified by adding ``changeset=<ID>`` URI
+parameter (i.e., ``PUT /browsers/15?changeset=73``).
 
 The representation includes:
 
@@ -89,29 +96,34 @@ The representation includes:
 * **links**
     - **user** *(one)* - The user who initiated this changeset, can not be
       changed.
-    - **browsers-history** *(many)* - Associated **browsers-history**, in
-      ID order, changes are ignored.
+    - **browsers-history** *(many)* - Associated browsers-history_, in ID
+      order, changes are ignored.
     - **browser-versions-history** *(many)* - Associated
-      **browser-versions-history**, in ID order, changes are ignored.
-    - **features-history** *(many)* - Associated **features-history**,
+      browser-versions-history_, in ID order, changes are ignored.
+    - **features-history** *(many)* - Associated features-history_,
       in ID order, changes are ignored.
-    - **feature-sets-history** *(many)* - Associated **feature-sets-history**,
+    - **feature-sets-history** *(many)* - Associated feature-sets-history_,
       in ID order, changes are ignored.
     - **browser-version-features-history** *(many)* - Associated
-      **browser-version-features-history**, in ID order, changes are
-      ignored.
+      browser-version-features-history_, in ID order, changes are ignored.
 
 
-To get a single **changeset** representation::
+To get a single **changeset** representation:
+
+.. code-block:: http
 
     GET /changeset/73 HTTP/1.1
     Host: api.compat.mozilla.org
     Accept: application/vnd.api+json
 
-::
+A sample response is:
+
+.. code-block:: http
 
     HTTP/1.1 200 OK
     Content-Type: application/vnd.api+json
+
+.. code-block:: json
 
     {
         "changesets": {
@@ -157,3 +169,12 @@ To get a single **changeset** representation::
         }
     }
 
+.. _user: Users_
+
+.. _browser-version-feature: resources.html#browser-version-features
+
+.. _browsers-history: history.html#browsers-history
+.. _browser-versions-history: history.html#browser-versions-history
+.. _browser-version-features-history: history.html#browser-version-features-history
+.. _features-history: history.html#features-history
+.. _feature-sets-history: history.html#feature-sets-history
